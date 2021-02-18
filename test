@@ -1,0 +1,57 @@
+using System;
+using System.Text.RegularExpressions;
+
+namespace ConsoleApp2
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string nameDb = null;
+
+            while (true)
+            {
+                Console.WriteLine(new string('-',30));
+                //вывод имени из бд
+                var colorDefault = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine($"NAME = {nameDb}");
+                Console.ForegroundColor = colorDefault;
+
+                //получаем инпуты
+                Console.WriteLine("ENTER THE NAME");
+                var inputName = Console.ReadLine();
+                Console.WriteLine();
+                Console.WriteLine("ENTER THE MIDDLENAME");
+                var inputMiddlename = Console.ReadLine();
+                Console.WriteLine();
+
+                if (inputName == string.Empty)
+                    inputName = null;
+                if (inputMiddlename == string.Empty)
+                    inputMiddlename = null;
+
+                if (inputName != null ) 
+                    inputName = Regex.Match(inputName, @"^([\S\-]+)").Value;
+
+                
+
+                string nameFromDb = null;
+                string middlenameFromDb = null;
+                if (nameDb != null) //пробуем парсить части
+                {
+                    nameFromDb = Regex.Match(nameDb, @"^([\S\-]+)").Value; // только первое слово
+                    middlenameFromDb = Regex.Match(nameDb, @"^([\S\-]+)\s{1}(.*)").Groups[2]?.Value; // все после первого слова и пробела (группа 2)
+                }
+                
+                //если имя было в инпуте - используем его, в противном случае используем имя из базы
+                var potentialName = inputName ?? nameFromDb;
+                var potentialMiddlename = inputMiddlename ?? middlenameFromDb;
+                nameDb = $"{potentialName} {potentialMiddlename}";
+                if (nameDb == " ")
+                    nameDb = null;
+
+            }
+        }
+    }
+}
